@@ -78,5 +78,5 @@ Fetches a list of trade offers for a specific item.
 
 ## Running the Script  
 If run directly, the script provides an interactive menu to fetch player, guild, and trade data.
-`python api.py`
+`python main.py`
 Select options from the menu to retrieve information dynamically.
