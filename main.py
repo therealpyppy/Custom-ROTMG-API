@@ -69,8 +69,8 @@ def getPlayerCharacters(userName: str = "HealthyGuy", log: bool = False):
 	except RequestException as e:
 		print(e)
 		return None
-	
-def getPlayerPets(userName: str, log: bool = False):
+
+def getPlayerPets(userName: str = "HealthyGuy", log: bool = False):
 	url = f"https://www.realmeye.com/pets-of/{userName}"
 	try:
 		response = session.get(url)
@@ -203,7 +203,7 @@ def end():
 if __name__ == "__main__":
 	if not test:
 		while True:
-			choice = input("[1] Get player info\n[2] Get player characters\n[3] Get trade offers\n[4] View all offers\n[6] Get guild info\n[e] Exit\n")
+			choice = input("[1] Get player info\n[2] Get player characters\n[3] Get player pets\n[4] Get trade offers\n[5] View all offers\n[6] Get guild info\n[e] Exit\n")
 			match choice:
 				case "1":
 					username = input("Player name: ")
@@ -212,6 +212,9 @@ if __name__ == "__main__":
 					username = input("Player name: ")
 					print(getPlayerCharacters(username)+"\n")
 				case "3":
+					username = input("Player name: ")
+					print(getPlayerPets(username, False)+"\n")
+				case "4":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					if tradeType != "B" and tradeType != "S":
 						print("Invalid input.")
@@ -230,7 +233,7 @@ if __name__ == "__main__":
 						ssnl = False
 					item = input("Item: ")
 					print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s"+"\n")
-				case "4":
+				case "5":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					ssnl = input("Seasonal[y/N]: ").upper().strip()
 					if ssnl == "N":
