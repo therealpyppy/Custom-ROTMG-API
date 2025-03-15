@@ -170,32 +170,25 @@ def getOfferCount(item: str = "Potion of Defense", log: bool = False, ssnl = Fal
         print(e)
         return None
 
-def getAllSelling(log: bool = False):
+def getAllOffers(log: bool = False, ssnl = False,  offerType = "buy"):
     try:
-        url = f"https://www.realmeye.com/current-offers"
+        if ssnl:
+            url = f"https://www.realmeye.com/current-seasonal-offers"
+        else:
+            url = f"https://www.realmeye.com/current-offers"
         response = session.get(url)
-        sellOffers = response.html.find(".item-selling")
-        offers = {}
-        for offer in sellOffers:
-            if len(offer.attrs["class"]) == 1:
-                title = offer.attrs["title"].lstrip("Offers to sell ")
-                offers[title] = offer.text
+        if offerType == "buy":
+            offerClass = ".item-buying"
+            stripText = "Offers to buy "
+        elif offerType == "sell":
+            offerClass = ".item-selling"
+            stripText = "Offers to sell "
 
-        return offers
-    
-    except RequestException as e:
-        print(e)
-        return None
-
-def getAllBuying(log: bool = False):
-    try:
-        url = f"https://www.realmeye.com/current-offers"
-        response = session.get(url)
-        sellOffers = response.html.find(".item-buying")
+        allOffers = response.html.find(offerClass)
         offers = {}
-        for offer in sellOffers:
+        for offer in allOffers:
             if len(offer.attrs["class"]) == 1:
-                title = offer.attrs["title"].lstrip("Offers to buy ")
+                title = offer.attrs["title"].lstrip(stripText)
                 offers[title] = offer.text
 
         return offers
@@ -215,19 +208,17 @@ def unit():
     except: failedTests.append(2)
     try: getOfferCount()
     except: failedTests.append(3)
-    try: getAllBuying()
+    try: getAllOffers()
     except: failedTests.append(4)
-    try: getAllSelling()
-    except: failedTests.append(5)
     try: getGuild()
-    except: failedTests.append(6)
+    except: failedTests.append(5)
     for i in failedTests:
         print(i)
 
 if __name__ == "__main__":
     if not test:
         while True:
-            choice = input("[1] Get player info\n[2] Get player characters\n[3] Get trade offers\n[4] View all BUY offers\n[5] View all SELL offers\n[6] Get guild info\n[e] Exit\n")
+            choice = input("[1] Get player info\n[2] Get player characters\n[3] Get trade offers\n[4] View all offers\n[6] Get guild info\n[e] Exit\n")
             if choice == "1":
                 username = input("Player name: ")
                 print(getPlayerInfo(username))
@@ -257,10 +248,22 @@ if __name__ == "__main__":
                 print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s")
                 end()
             elif choice == "4":
-                print(getAllBuying())
-                end()
-            elif choice == "5":
-                print(getAllSelling())
+                tradeType = input("[B]uy or [S]ell? ").upper()
+                ssnl = input("Seasonal[y/N]: ").upper().strip()
+                if ssnl == "N":
+                    ssnl = False
+                elif ssnl == "Y":
+                    ssnl = True
+                else:
+                    ssnl = False
+                if tradeType != "B" and tradeType != "S":
+                    print("Invalid input.")
+                    continue
+                if tradeType == "B":
+                    tradeType = "buy"
+                elif tradeType == "S":
+                    tradeType = "sell"
+                print(getAllOffers(False, tradeType))
                 end()
             elif choice == "6":
                 guild = input("Guild name: ")
