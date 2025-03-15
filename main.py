@@ -200,21 +200,6 @@ def getAllOffers(log: bool = False, ssnl = False,  offerType = "buy"):
 def end():
 	print()
 
-def unit():
-	failedTests = []
-	try: getPlayerInfo()
-	except: failedTests.append(1)
-	try: getPlayerCharacters()
-	except: failedTests.append(2)
-	try: getOfferCount()
-	except: failedTests.append(3)
-	try: getAllOffers()
-	except: failedTests.append(4)
-	try: getGuild()
-	except: failedTests.append(5)
-	for i in failedTests:
-		print(i)
-
 if __name__ == "__main__":
 	if not test:
 		while True:
@@ -222,12 +207,10 @@ if __name__ == "__main__":
 			match choice:
 				case "1":
 					username = input("Player name: ")
-					print(getPlayerInfo(username))
-					end()
+					print(getPlayerInfo(username)+"\n")
 				case "2":
 					username = input("Player name: ")
-					print(getPlayerCharacters(username))
-					end()
+					print(getPlayerCharacters(username)+"\n")
 				case "3":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					if tradeType != "B" and tradeType != "S":
@@ -246,8 +229,7 @@ if __name__ == "__main__":
 					else:
 						ssnl = False
 					item = input("Item: ")
-					print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s")
-					end()
+					print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s"+"\n")
 				case "4":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					ssnl = input("Seasonal[y/N]: ").upper().strip()
@@ -264,14 +246,9 @@ if __name__ == "__main__":
 						tradeType = "buy"
 					elif tradeType == "S":
 						tradeType = "sell"
-					print(getAllOffers(False, tradeType))
-					end()
+					print(getAllOffers(False, tradeType)+"\n")
 				case "6":
 					guild = input("Guild name: ")
-					print(getGuild(guild))
-					end()
+					print(getGuild(guild)+"\n")
 				case "e":
 					os.close()
-				case "unit":
-					unit()
-					end()
