@@ -1,5 +1,5 @@
 import os
-import requests
+from requests import RequestException
 from requests_html import HTMLSession
 session = HTMLSession()
 test = False
@@ -18,7 +18,7 @@ def getPlayerInfo(userName: str = "HealthyGuy"):
             info[category] = categoryValue
         return info
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
     
@@ -66,7 +66,7 @@ def getPlayerCharacters(userName: str = "HealthyGuy", log: bool = False):
             characters[i%characterCount] = character
         return characters
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
     
@@ -106,7 +106,7 @@ def getPlayerPets(userName: str, log: bool = False):
             pets[i] = pet
         return pets
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
     
@@ -139,7 +139,7 @@ def getGuild(guildName: str = "Frog Bait", log: bool = False):
         guildInfo['PlayersByFame'] = fameList
         return guildInfo
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
 
@@ -158,7 +158,7 @@ def getSelling(item: str = "Potion of Defense", log: bool = False):
             print(f"There are no offers for a {item}")
         return 0
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
     
@@ -177,7 +177,7 @@ def getBuying(item: str = "Potion of Defense", log: bool = False):
             print(f"There are no offers for a {item}")
         return 0
 
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
 
@@ -194,7 +194,7 @@ def getAllSelling(log: bool = False):
 
         return offers
     
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
 
@@ -211,7 +211,7 @@ def getAllBuying(log: bool = False):
 
         return offers
     
-    except requests.exceptions.RequestException as e:
+    except RequestException as e:
         print(e)
         return None
 
