@@ -3,114 +3,119 @@ from requests_html import HTMLSession
 session = HTMLSession()
 test = False
 
-def getPlayerInfo(userName: str = "HealthyGuy"):
-	url = f"https://www.realmeye.com/player/{userName}"
-	try:
-		response = session.get(url)
-		info = {}
-		summary = response.html.find(".summary")[0]
+class Player:
+	def __init__(self, userName):
+		self.userName = userName
 
-		for i in range(0, summary.text.count("\n")+1, 2):
-			category = response.html.find('td')[i].text
-			categoryValue = response.html.find('td')[i+1].text
-			#print(category, ":", categoryValue)
-			info[category] = categoryValue
-		return info
+	def getPlayerInfo(userName: str = "HealthyGuy", log: bool = False):
+		url = f"https://www.realmeye.com/player/{userName}"
+		try:
+			response = session.get(url)
+			info = {}
+			summary = response.html.find(".summary")[0]
 
-	except RequestException as e:
-		print(e)
-		return None
-	
-def getPlayerCharacters(userName: str = "HealthyGuy", log: bool = False):
-	url = f"https://www.realmeye.com/player/{userName}"
-	try:
-		response = session.get(url)
-		characters = {}
-		characterCount = len(response.html.find("#e > tbody > tr"))
-		if characterCount == 0:
+			for i in range(0, summary.text.count("\n")+1, 2):
+				category = response.html.find('td')[i].text
+				categoryValue = response.html.find('td')[i+1].text
+				if log:
+					print(category, ":", categoryValue)
+				info[category] = categoryValue
+			return info
+
+		except RequestException as e:
+			print(e)
 			return None
-		data = response.html.find("#e > tbody > tr > td")
-		dataShown = len(data)//characterCount
+		
+	def getPlayerCharacters(userName: str = "HealthyGuy", log: bool = False):
+		url = f"https://www.realmeye.com/player/{userName}"
+		try:
+			response = session.get(url)
+			characters = {}
+			characterCount = len(response.html.find("#e > tbody > tr"))
+			if characterCount == 0:
+				return None
+			data = response.html.find("#e > tbody > tr > td")
+			dataShown = len(data)//characterCount
 
-		for i in range(0,characterCount*dataShown, dataShown):
-			if log:
-				print("Pet:", data[i].find("abbr, span, a")[0].attrs.get("title", "Pets cannot be found at this time :("))
-				print("Class:", data[i+2].text)
-				print("Level:", data[i+3].text)
-				print("Fame:", data[i+4].text)
-				print("Place:", data[i+5].text)
-				print("Stats:", data[i+7].text)
+			for i in range(0,characterCount*dataShown, dataShown):
+				if log:
+					print("Pet:", data[i].find("abbr, span, a")[0].attrs.get("title", "Pets cannot be found at this time :("))
+					print("Class:", data[i+2].text)
+					print("Level:", data[i+3].text)
+					print("Fame:", data[i+4].text)
+					print("Place:", data[i+5].text)
+					print("Stats:", data[i+7].text)
+					if dataShown > 8:
+						print("Last Seen:", data[i+8].text)
+					if dataShown > 9:
+						print("Server:", data[i+9].text)
+
 				if dataShown > 8:
-					print("Last Seen:", data[i+8].text)
+					lastSeen = data[i+8].text
+				else:
+					lastSeen = None
 				if dataShown > 9:
-					print("Server:", data[i+9].text)
+					server = data[i+9].text
+				else:
+					server = None
 
-			if dataShown > 8:
-				lastSeen = data[i+8].text
-			else:
-				lastSeen = None
-			if dataShown > 9:
-				server = data[i+9].text
-			else:
-				server = None
+				character = {"Pet": data[i].find("abbr, span, a")[0].attrs.get("title", "Pets cannot be found at this time :("),
+								"Class": data[i+2].text,
+								"Level": data[i+3].text,
+								"Fame": data[i+4].text,
+								"Place": data[i+5].text,
+								"Stats": data[i+7].text,
+								"Last Seen": lastSeen,
+								"Server": server}
+				characters[i%characterCount] = character
+			return characters
 
-			character = {"Pet": data[i].find("abbr, span, a")[0].attrs.get("title", "Pets cannot be found at this time :("),
-							"Class": data[i+2].text,
-							"Level": data[i+3].text,
-							"Fame": data[i+4].text,
-							"Place": data[i+5].text,
-							"Stats": data[i+7].text,
-							"Last Seen": lastSeen,
-							"Server": server}
-			characters[i%characterCount] = character
-		return characters
+		except RequestException as e:
+			print(e)
+			return None
 
-	except RequestException as e:
-		print(e)
-		return None
+	def getPlayerPets(userName: str = "HealthyGuy", log: bool = False):
+		url = f"https://www.realmeye.com/pets-of/{userName}"
+		try:
+			response = session.get(url)
+			pets = {}
+			for i, v in enumerate(response.html.find("#e > tbody > tr")):
+				pet = {}
+				Name = v.find("td")[1].text
+				Rarity = v.find("td")[2].text
+				Family = v.find("td")[3].text
+				Place = v.find("td")[4].text
+				Ability1 = v.find("td")[5].text
+				Ability1Level = v.find("td")[6].text
+				Ability2 = v.find("td")[7].text
+				Ability2Level = v.find("td")[8].text
+				Ability3 = v.find("td")[9].text
+				Ability3Level = v.find("td")[10].text
+				MaxLevel = v.find("td")[11].text
+				pet["Name"] = Name
+				pet["Rarity"] = Rarity
+				pet["Family"] = Family
+				pet["Place"] = Place
+				pet["Ability1"] = Ability1
+				pet["Ability1Level"] = Ability1Level
+				pet["Ability2"] = Ability2
+				pet["Ability2Level"] = Ability2Level
+				pet["Ability3"] = Ability3 
+				pet["Ability3Level"] = Ability3Level
+				pet["MaxLevel"] = MaxLevel
 
-def getPlayerPets(userName: str = "HealthyGuy", log: bool = False):
-	url = f"https://www.realmeye.com/pets-of/{userName}"
-	try:
-		response = session.get(url)
-		pets = {}
-		for i, v in enumerate(response.html.find("#e > tbody > tr")):
-			pet = {}
-			Name = v.find("td")[1].text
-			Rarity = v.find("td")[2].text
-			Family = v.find("td")[3].text
-			Place = v.find("td")[4].text
-			Ability1 = v.find("td")[5].text
-			Ability1Level = v.find("td")[6].text
-			Ability2 = v.find("td")[7].text
-			Ability2Level = v.find("td")[8].text
-			Ability3 = v.find("td")[9].text
-			Ability3Level = v.find("td")[10].text
-			MaxLevel = v.find("td")[11].text
-			pet["Name"] = Name
-			pet["Rarity"] = Rarity
-			pet["Family"] = Family
-			pet["Place"] = Place
-			pet["Ability1"] = Ability1
-			pet["Ability1Level"] = Ability1Level
-			pet["Ability2"] = Ability2
-			pet["Ability2Level"] = Ability2Level
-			pet["Ability3"] = Ability3 
-			pet["Ability3Level"] = Ability3Level
-			pet["MaxLevel"] = MaxLevel
+				if log:
+					print(f"Name : {Name}\nRarity : {Rarity}\nFamily : {Family}\nPlace : {Place}\nAbility 1 : {Ability1}\nAbility 1 Level : {Ability1Level}\nAbility 2 : {Ability2}\nAbility 2 Level : {Ability2Level}\nAbility 3 : {Ability3}\nAbility 3 Level : {Ability3Level}\nMax Level : {MaxLevel}\n")
 
-			if log:
-				print(f"Name : {Name}\nRarity : {Rarity}\nFamily : {Family}\nPlace : {Place}\nAbility 1 : {Ability1}\nAbility 1 Level : {Ability1Level}\nAbility 2 : {Ability2}\nAbility 2 Level : {Ability2Level}\nAbility 3 : {Ability3}\nAbility 3 Level : {Ability3Level}\nMax Level : {MaxLevel}\n")
+				pets[i] = pet
+			return pets
 
-			pets[i] = pet
-		return pets
+		except RequestException as e:
+			print(e)
+			return None
 
-	except RequestException as e:
-		print(e)
-		return None
-	
 def getItemFromId(id: int = 0):
-	print()
+	Warning("Not implemented")
 
 def getGuild(guildName: str = "Frog Bait", log: bool = False):
 	try:
@@ -196,25 +201,22 @@ def getAllOffers(log: bool = False, ssnl = False,  offerType = "buy"):
 		print(e)
 		return None
 
-def end():
-	print()
-
 if __name__ == "__main__":
 	if not test:
 		while True:
 			choice = input("[1] Get player info\n[2] Get player characters\n[3] Get player pets\n[4] Get trade offers\n[5] View all offers\n[6] Get guild info\n[e] Exit\n")
 			match choice:
 				case "1":
-					username = input("Player name: ")
-					print(getPlayerInfo(username))
+					player = Player(userName = input("Player name: "))
+					print(player.getPlayerInfo(player.userName, False))
 					print("\n")
 				case "2":
-					username = input("Player name: ")
-					print(getPlayerCharacters(username))
+					player = Player(userName = input("Player name: "))
+					print(player.getPlayerCharacters(player.userName, False))
 					print("\n")
 				case "3":
-					username = input("Player name: ")
-					print(getPlayerPets(username, False))
+					player = Player(userName = input("Player name: "))
+					print(player.getPlayerPets(player.userName, False))
 					print("\n")
 				case "4":
 					tradeType = input("[B]uy or [S]ell? ").upper()
