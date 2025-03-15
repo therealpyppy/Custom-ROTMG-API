@@ -142,36 +142,25 @@ def getGuild(guildName: str = "Frog Bait", log: bool = False):
     except RequestException as e:
         print(e)
         return None
-
-def getSelling(item: str = "Potion of Defense", log: bool = False):
-    try:
-        url = f"https://www.realmeye.com/current-offers"
-        response = session.get(url)
-        sellOffers = response.html.find(".item-selling")
-        for offer in sellOffers:
-            if len(offer.attrs["class"]) == 1:
-                if item == offer.attrs["title"].lstrip("Offers to sell "):
-                    if log:
-                        print(f"There's {offer.text} offer/s selling a {item}")
-                    return offer.text
-        if log:
-            print(f"There are no offers for a {item}")
-        return 0
-
-    except RequestException as e:
-        print(e)
-        return None
     
-def getBuying(item: str = "Potion of Defense", log: bool = False):
+def getOfferCount(item: str = "Potion of Defense", log: bool = False, ssnl = False, offerType = "buy"):
     try:
-        url = f"https://www.realmeye.com/current-offers"
+        if ssnl:
+            url = f"https://www.realmeye.com/current-seasonal-offers"
+        else:
+            url = f"https://www.realmeye.com/current-offers"
         response = session.get(url)
-        sellOffers = response.html.find(".item-buying")
-        for offer in sellOffers:
+        if offerType == "buy":
+            offers = response.html.find(".item-buying")
+            stripText = "Offers to buy "
+        elif offerType == "sell":
+            offers = response.html.find(".item-selling")
+            stripText = "Offers to sell "
+        for offer in offers:
             if len(offer.attrs["class"]) == 1:
-                if item == offer.attrs["title"].lstrip("Offers to sell "):
+                if item == offer.attrs["title"].lstrip(stripText):
                     if log:
-                        print(f"There's {offer.text} offer/s buying a {item}")
+                        print(f"There's {offer.text} {offerType} offer/s for {item}")
                     return offer.text
         if log:
             print(f"There are no offers for a {item}")
@@ -224,23 +213,21 @@ def unit():
     except: failedTests.append(1)
     try: getPlayerCharacters()
     except: failedTests.append(2)
-    try: getBuying()
+    try: getOfferCount()
     except: failedTests.append(3)
-    try: getSelling()
-    except: failedTests.append(4)
     try: getAllBuying()
-    except: failedTests.append(5)
+    except: failedTests.append(4)
     try: getAllSelling()
-    except: failedTests.append(6)
+    except: failedTests.append(5)
     try: getGuild()
-    except: failedTests.append(7)
+    except: failedTests.append(6)
     for i in failedTests:
         print(i)
 
 if __name__ == "__main__":
     if not test:
         while True:
-            choice = input("[1] Get player info\n[2] Get player characters\n[3] Get buy offers\n[4] Get sell offers\n[5] View all BUY offers\n[6] View all SELL offers\n[7] Get guild info\n[e] Exit\n")
+            choice = input("[1] Get player info\n[2] Get player characters\n[3] Get trade offers\n[4] View all BUY offers\n[5] View all SELL offers\n[6] Get guild info\n[e] Exit\n")
             if choice == "1":
                 username = input("Player name: ")
                 print(getPlayerInfo(username))
@@ -250,20 +237,32 @@ if __name__ == "__main__":
                 print(getPlayerCharacters(username))
                 end()
             elif choice == "3":
+                tradeType = input("[B]uy or [S]ell? ").upper()
+                if tradeType != "B" and tradeType != "S":
+                    print("Invalid input.")
+                    continue
+                if tradeType == "B":
+                    tradeType = "buy"
+                elif tradeType == "S":
+                    tradeType = "sell"
+
+                ssnl = input("Seasonal[y/N]: ").upper().strip()
+                if ssnl == "N":
+                    ssnl = False
+                elif ssnl == "Y":
+                    ssnl = True
+                else:
+                    ssnl = False
                 item = input("Item: ")
-                print(f"There are {getBuying(item)} offers buying {item}/s")
+                print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s")
                 end()
             elif choice == "4":
-                item = input("Item: ")
-                print(f"There are {getSelling(item)} offers selling {item}/s")
-                end()
-            elif choice == "5":
                 print(getAllBuying())
                 end()
-            elif choice == "6":
+            elif choice == "5":
                 print(getAllSelling())
                 end()
-            elif choice == "7":
+            elif choice == "6":
                 guild = input("Guild name: ")
                 print(getGuild(guild))
                 end()
