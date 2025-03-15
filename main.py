@@ -1,4 +1,3 @@
-import os
 from requests import RequestException
 from requests_html import HTMLSession
 session = HTMLSession()
@@ -260,4 +259,6 @@ if __name__ == "__main__":
 					print(getGuild(guild))
 					print("\n")
 				case "e":
-					os.close()
+					break
+				case "E":
+					break
