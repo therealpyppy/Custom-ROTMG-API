@@ -207,13 +207,16 @@ if __name__ == "__main__":
 			match choice:
 				case "1":
 					username = input("Player name: ")
-					print(getPlayerInfo(username)+"\n")
+					print(getPlayerInfo(username))
+					print("\n")
 				case "2":
 					username = input("Player name: ")
-					print(getPlayerCharacters(username)+"\n")
+					print(getPlayerCharacters(username))
+					print("\n")
 				case "3":
 					username = input("Player name: ")
-					print(getPlayerPets(username, False)+"\n")
+					print(getPlayerPets(username, False))
+					print("\n")
 				case "4":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					if tradeType != "B" and tradeType != "S":
@@ -232,7 +235,8 @@ if __name__ == "__main__":
 					else:
 						ssnl = False
 					item = input("Item: ")
-					print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s"+"\n")
+					print(f"There are {getOfferCount(item, False, ssnl, tradeType)} offers selling {item}/s")
+					print("\n")
 				case "5":
 					tradeType = input("[B]uy or [S]ell? ").upper()
 					ssnl = input("Seasonal[y/N]: ").upper().strip()
@@ -249,9 +253,11 @@ if __name__ == "__main__":
 						tradeType = "buy"
 					elif tradeType == "S":
 						tradeType = "sell"
-					print(getAllOffers(False, tradeType)+"\n")
+					print(getAllOffers(False, tradeType))
+					print("\n")
 				case "6":
 					guild = input("Guild name: ")
-					print(getGuild(guild)+"\n")
+					print(getGuild(guild))
+					print("\n")
 				case "e":
 					os.close()
