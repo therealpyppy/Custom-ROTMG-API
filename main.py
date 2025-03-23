@@ -193,7 +193,7 @@ def getAllOffers(log: bool = False, ssnl = False,  offerType = "buy"):
         print(e)
         return None
 
-def convertItemToId(item: str = "Potion of Defense", log: bool = False):
+def getItemToId(item: str = "Potion of Defense", log: bool = False):
     try:
         url = "https://www.realmeye.com/current-offers"
         response = session.get(url)
