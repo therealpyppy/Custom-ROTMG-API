@@ -49,7 +49,6 @@ class Player:
                     server = None
 
                 if log:
-                    print("Pet:", data[0].find("abbr, span, a")[0].attrs.get("title", "Pets cannot be found at this time :("))
                     print("Class:", data[2].text)
                     print("Level:", data[3].text)
                     print("Fame:", data[4].text)
