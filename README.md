@@ -1,4 +1,4 @@
-# Custom ROTMG API  
+# Rotmg Scraper
 Scrapes the [RealmEye website](https://www.realmeye.com) for most of the important information you could possibly need.  
 
 ## API Methods  
